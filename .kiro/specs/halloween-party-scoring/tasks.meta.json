@@ -1,0 +1,459 @@
+{
+  "pbtResults": {
+    "8.3 Write property test for invalid entry leaving team total unchanged": {
+      "status": "passed",
+      "lastRunTimestamp": 1790355768260
+    },
+    "14.4 Write property test for reset preserving names": {
+      "status": "passed",
+      "lastRunTimestamp": 1790425183198
+    }
+  },
+  "executionHistory": {
+    "1. Set up project scaffold and test tooling": [
+      {
+        "executionId": "6d98ca2a-e8a9-44d5-aead-0fe1fc428b06",
+        "chatSessionId": "sess_847ad821-5527-4db3-977a-1e6c08fc25ad",
+        "timestamp": 1790352615854
+      },
+      {
+        "executionId": "6d98ca2a-e8a9-44d5-aead-0fe1fc428b06",
+        "chatSessionId": "sess_847ad821-5527-4db3-977a-1e6c08fc25ad",
+        "timestamp": 1790352624061
+      },
+      {
+        "executionId": "6d98ca2a-e8a9-44d5-aead-0fe1fc428b06",
+        "chatSessionId": "sess_847ad821-5527-4db3-977a-1e6c08fc25ad",
+        "timestamp": 1790352784925
+      }
+    ],
+    "2.1 Define teams, games, matchups, and constants": [
+      {
+        "executionId": "6d98ca2a-e8a9-44d5-aead-0fe1fc428b06",
+        "chatSessionId": "sess_847ad821-5527-4db3-977a-1e6c08fc25ad",
+        "timestamp": 1790352615958
+      },
+      {
+        "executionId": "6d98ca2a-e8a9-44d5-aead-0fe1fc428b06",
+        "chatSessionId": "sess_847ad821-5527-4db3-977a-1e6c08fc25ad",
+        "timestamp": 1790352789754
+      },
+      {
+        "executionId": "6d98ca2a-e8a9-44d5-aead-0fe1fc428b06",
+        "chatSessionId": "sess_847ad821-5527-4db3-977a-1e6c08fc25ad",
+        "timestamp": 1790353007557
+      }
+    ],
+    "3.1 Implement `teamTotal` and `allTotals`": [
+      {
+        "executionId": "6d98ca2a-e8a9-44d5-aead-0fe1fc428b06",
+        "chatSessionId": "sess_847ad821-5527-4db3-977a-1e6c08fc25ad",
+        "timestamp": 1790352616036
+      },
+      {
+        "executionId": "6d98ca2a-e8a9-44d5-aead-0fe1fc428b06",
+        "chatSessionId": "sess_847ad821-5527-4db3-977a-1e6c08fc25ad",
+        "timestamp": 1790352790719
+      },
+      {
+        "executionId": "6d98ca2a-e8a9-44d5-aead-0fe1fc428b06",
+        "chatSessionId": "sess_847ad821-5527-4db3-977a-1e6c08fc25ad",
+        "timestamp": 1790353008869
+      }
+    ],
+    "4.1 Implement `validateScoreInput`": [
+      {
+        "executionId": "6d98ca2a-e8a9-44d5-aead-0fe1fc428b06",
+        "chatSessionId": "sess_847ad821-5527-4db3-977a-1e6c08fc25ad",
+        "timestamp": 1790352616107
+      },
+      {
+        "executionId": "6d98ca2a-e8a9-44d5-aead-0fe1fc428b06",
+        "chatSessionId": "sess_847ad821-5527-4db3-977a-1e6c08fc25ad",
+        "timestamp": 1790352792102
+      },
+      {
+        "executionId": "6d98ca2a-e8a9-44d5-aead-0fe1fc428b06",
+        "chatSessionId": "sess_847ad821-5527-4db3-977a-1e6c08fc25ad",
+        "timestamp": 1790353011070
+      }
+    ],
+    "5. Checkpoint - Ensure all tests pass": [
+      {
+        "executionId": "6d98ca2a-e8a9-44d5-aead-0fe1fc428b06",
+        "chatSessionId": "sess_847ad821-5527-4db3-977a-1e6c08fc25ad",
+        "timestamp": 1790352616142
+      },
+      {
+        "executionId": "6d98ca2a-e8a9-44d5-aead-0fe1fc428b06",
+        "chatSessionId": "sess_847ad821-5527-4db3-977a-1e6c08fc25ad",
+        "timestamp": 1790355234426
+      }
+    ],
+    "6.1 Implement save/load/clear over localStorage": [
+      {
+        "executionId": "6d98ca2a-e8a9-44d5-aead-0fe1fc428b06",
+        "chatSessionId": "sess_847ad821-5527-4db3-977a-1e6c08fc25ad",
+        "timestamp": 1790352616172
+      },
+      {
+        "executionId": "6d98ca2a-e8a9-44d5-aead-0fe1fc428b06",
+        "chatSessionId": "sess_847ad821-5527-4db3-977a-1e6c08fc25ad",
+        "timestamp": 1790352792950
+      },
+      {
+        "executionId": "6d98ca2a-e8a9-44d5-aead-0fe1fc428b06",
+        "chatSessionId": "sess_847ad821-5527-4db3-977a-1e6c08fc25ad",
+        "timestamp": 1790353011188
+      }
+    ],
+    "7.1 Build `index.html` structure and grid": [
+      {
+        "executionId": "6d98ca2a-e8a9-44d5-aead-0fe1fc428b06",
+        "chatSessionId": "sess_847ad821-5527-4db3-977a-1e6c08fc25ad",
+        "timestamp": 1790352616229
+      },
+      {
+        "executionId": "6d98ca2a-e8a9-44d5-aead-0fe1fc428b06",
+        "chatSessionId": "sess_847ad821-5527-4db3-977a-1e6c08fc25ad",
+        "timestamp": 1790353023253
+      },
+      {
+        "executionId": "6d98ca2a-e8a9-44d5-aead-0fe1fc428b06",
+        "chatSessionId": "sess_847ad821-5527-4db3-977a-1e6c08fc25ad",
+        "timestamp": 1790355229562
+      }
+    ],
+    "7.2 Implement the theme and readability styles in `styles.css`": [
+      {
+        "executionId": "6d98ca2a-e8a9-44d5-aead-0fe1fc428b06",
+        "chatSessionId": "sess_847ad821-5527-4db3-977a-1e6c08fc25ad",
+        "timestamp": 1790352616266
+      },
+      {
+        "executionId": "6d98ca2a-e8a9-44d5-aead-0fe1fc428b06",
+        "chatSessionId": "sess_847ad821-5527-4db3-977a-1e6c08fc25ad",
+        "timestamp": 1790355243009
+      },
+      {
+        "executionId": "6d98ca2a-e8a9-44d5-aead-0fe1fc428b06",
+        "chatSessionId": "sess_847ad821-5527-4db3-977a-1e6c08fc25ad",
+        "timestamp": 1790355356715
+      }
+    ],
+    "7.3 Add inline-SVG Halloween icons with emoji fallback": [
+      {
+        "executionId": "6d98ca2a-e8a9-44d5-aead-0fe1fc428b06",
+        "chatSessionId": "sess_847ad821-5527-4db3-977a-1e6c08fc25ad",
+        "timestamp": 1790352616294
+      },
+      {
+        "executionId": "6d98ca2a-e8a9-44d5-aead-0fe1fc428b06",
+        "chatSessionId": "sess_847ad821-5527-4db3-977a-1e6c08fc25ad",
+        "timestamp": 1790355357870
+      },
+      {
+        "executionId": "6d98ca2a-e8a9-44d5-aead-0fe1fc428b06",
+        "chatSessionId": "sess_847ad821-5527-4db3-977a-1e6c08fc25ad",
+        "timestamp": 1790355519454
+      }
+    ],
+    "7.4 Add CSS ambient animations": [
+      {
+        "executionId": "6d98ca2a-e8a9-44d5-aead-0fe1fc428b06",
+        "chatSessionId": "sess_847ad821-5527-4db3-977a-1e6c08fc25ad",
+        "timestamp": 1790352616349
+      },
+      {
+        "executionId": "6d98ca2a-e8a9-44d5-aead-0fe1fc428b06",
+        "chatSessionId": "sess_847ad821-5527-4db3-977a-1e6c08fc25ad",
+        "timestamp": 1790355518468
+      },
+      {
+        "executionId": "6d98ca2a-e8a9-44d5-aead-0fe1fc428b06",
+        "chatSessionId": "sess_847ad821-5527-4db3-977a-1e6c08fc25ad",
+        "timestamp": 1790355672042
+      }
+    ],
+    "8.1 Implement render functions": [
+      {
+        "executionId": "6d98ca2a-e8a9-44d5-aead-0fe1fc428b06",
+        "chatSessionId": "sess_847ad821-5527-4db3-977a-1e6c08fc25ad",
+        "timestamp": 1790352616380
+      },
+      {
+        "executionId": "6d98ca2a-e8a9-44d5-aead-0fe1fc428b06",
+        "chatSessionId": "sess_847ad821-5527-4db3-977a-1e6c08fc25ad",
+        "timestamp": 1790355241908
+      },
+      {
+        "executionId": "6d98ca2a-e8a9-44d5-aead-0fe1fc428b06",
+        "chatSessionId": "sess_847ad821-5527-4db3-977a-1e6c08fc25ad",
+        "timestamp": 1790355355475
+      }
+    ],
+    "8.2 Implement input handling and state updates": [
+      {
+        "executionId": "6d98ca2a-e8a9-44d5-aead-0fe1fc428b06",
+        "chatSessionId": "sess_847ad821-5527-4db3-977a-1e6c08fc25ad",
+        "timestamp": 1790352616413
+      },
+      {
+        "executionId": "6d98ca2a-e8a9-44d5-aead-0fe1fc428b06",
+        "chatSessionId": "sess_847ad821-5527-4db3-977a-1e6c08fc25ad",
+        "timestamp": 1790355525753
+      },
+      {
+        "executionId": "6d98ca2a-e8a9-44d5-aead-0fe1fc428b06",
+        "chatSessionId": "sess_847ad821-5527-4db3-977a-1e6c08fc25ad",
+        "timestamp": 1790355672927
+      }
+    ],
+    "8.4 Wire persistence, startup, and reset flow": [
+      {
+        "executionId": "6d98ca2a-e8a9-44d5-aead-0fe1fc428b06",
+        "chatSessionId": "sess_847ad821-5527-4db3-977a-1e6c08fc25ad",
+        "timestamp": 1790352616445
+      },
+      {
+        "executionId": "6d98ca2a-e8a9-44d5-aead-0fe1fc428b06",
+        "chatSessionId": "sess_847ad821-5527-4db3-977a-1e6c08fc25ad",
+        "timestamp": 1790355678550
+      },
+      {
+        "executionId": "6d98ca2a-e8a9-44d5-aead-0fe1fc428b06",
+        "chatSessionId": "sess_847ad821-5527-4db3-977a-1e6c08fc25ad",
+        "timestamp": 1790355814199
+      }
+    ],
+    "9. Checkpoint - Ensure all tests pass": [
+      {
+        "executionId": "6d98ca2a-e8a9-44d5-aead-0fe1fc428b06",
+        "chatSessionId": "sess_847ad821-5527-4db3-977a-1e6c08fc25ad",
+        "timestamp": 1790352616525
+      },
+      {
+        "executionId": "6d98ca2a-e8a9-44d5-aead-0fe1fc428b06",
+        "chatSessionId": "sess_847ad821-5527-4db3-977a-1e6c08fc25ad",
+        "timestamp": 1790355829934
+      }
+    ],
+    "11. Final checkpoint - Ensure all tests pass": [
+      {
+        "executionId": "6d98ca2a-e8a9-44d5-aead-0fe1fc428b06",
+        "chatSessionId": "sess_847ad821-5527-4db3-977a-1e6c08fc25ad",
+        "timestamp": 1790352616561
+      },
+      {
+        "executionId": "6d98ca2a-e8a9-44d5-aead-0fe1fc428b06",
+        "chatSessionId": "sess_847ad821-5527-4db3-977a-1e6c08fc25ad",
+        "timestamp": 1790356095560
+      }
+    ],
+    "2. Implement the Config module": [
+      {
+        "executionId": "6d98ca2a-e8a9-44d5-aead-0fe1fc428b06",
+        "chatSessionId": "sess_847ad821-5527-4db3-977a-1e6c08fc25ad",
+        "timestamp": 1790353007596
+      }
+    ],
+    "3. Implement the Totals module (pure)": [
+      {
+        "executionId": "6d98ca2a-e8a9-44d5-aead-0fe1fc428b06",
+        "chatSessionId": "sess_847ad821-5527-4db3-977a-1e6c08fc25ad",
+        "timestamp": 1790353008965
+      }
+    ],
+    "4. Implement the Validation module (pure)": [
+      {
+        "executionId": "6d98ca2a-e8a9-44d5-aead-0fe1fc428b06",
+        "chatSessionId": "sess_847ad821-5527-4db3-977a-1e6c08fc25ad",
+        "timestamp": 1790353011108
+      }
+    ],
+    "6. Implement the Persistence module": [
+      {
+        "executionId": "6d98ca2a-e8a9-44d5-aead-0fe1fc428b06",
+        "chatSessionId": "sess_847ad821-5527-4db3-977a-1e6c08fc25ad",
+        "timestamp": 1790353011222
+      }
+    ],
+    "2.2 Write unit tests for Config correctness": [
+      {
+        "executionId": "6d98ca2a-e8a9-44d5-aead-0fe1fc428b06",
+        "chatSessionId": "sess_847ad821-5527-4db3-977a-1e6c08fc25ad",
+        "timestamp": 1790353024201
+      },
+      {
+        "executionId": "6d98ca2a-e8a9-44d5-aead-0fe1fc428b06",
+        "chatSessionId": "sess_847ad821-5527-4db3-977a-1e6c08fc25ad",
+        "timestamp": 1790355220117
+      }
+    ],
+    "3.2 Write property test for team totals": [
+      {
+        "executionId": "6d98ca2a-e8a9-44d5-aead-0fe1fc428b06",
+        "chatSessionId": "sess_847ad821-5527-4db3-977a-1e6c08fc25ad",
+        "timestamp": 1790353025582
+      },
+      {
+        "executionId": "6d98ca2a-e8a9-44d5-aead-0fe1fc428b06",
+        "chatSessionId": "sess_847ad821-5527-4db3-977a-1e6c08fc25ad",
+        "timestamp": 1790355221164
+      }
+    ],
+    "3.3 Write property test for negative total formatting": [
+      {
+        "executionId": "6d98ca2a-e8a9-44d5-aead-0fe1fc428b06",
+        "chatSessionId": "sess_847ad821-5527-4db3-977a-1e6c08fc25ad",
+        "timestamp": 1790353027031
+      },
+      {
+        "executionId": "6d98ca2a-e8a9-44d5-aead-0fe1fc428b06",
+        "chatSessionId": "sess_847ad821-5527-4db3-977a-1e6c08fc25ad",
+        "timestamp": 1790355222534
+      }
+    ],
+    "4.2 Write property test for accepting valid in-range integers": [
+      {
+        "executionId": "6d98ca2a-e8a9-44d5-aead-0fe1fc428b06",
+        "chatSessionId": "sess_847ad821-5527-4db3-977a-1e6c08fc25ad",
+        "timestamp": 1790353027931
+      },
+      {
+        "executionId": "6d98ca2a-e8a9-44d5-aead-0fe1fc428b06",
+        "chatSessionId": "sess_847ad821-5527-4db3-977a-1e6c08fc25ad",
+        "timestamp": 1790355223501
+      }
+    ],
+    "4.3 Write property test for rejecting invalid input and retaining previous value": [
+      {
+        "executionId": "6d98ca2a-e8a9-44d5-aead-0fe1fc428b06",
+        "chatSessionId": "sess_847ad821-5527-4db3-977a-1e6c08fc25ad",
+        "timestamp": 1790353029393
+      },
+      {
+        "executionId": "6d98ca2a-e8a9-44d5-aead-0fe1fc428b06",
+        "chatSessionId": "sess_847ad821-5527-4db3-977a-1e6c08fc25ad",
+        "timestamp": 1790355224700
+      }
+    ],
+    "6.2 Write property test for persistence round-trip": [
+      {
+        "executionId": "6d98ca2a-e8a9-44d5-aead-0fe1fc428b06",
+        "chatSessionId": "sess_847ad821-5527-4db3-977a-1e6c08fc25ad",
+        "timestamp": 1790353030775
+      },
+      {
+        "executionId": "6d98ca2a-e8a9-44d5-aead-0fe1fc428b06",
+        "chatSessionId": "sess_847ad821-5527-4db3-977a-1e6c08fc25ad",
+        "timestamp": 1790355226089
+      }
+    ],
+    "6.3 Write property test for robust loading of arbitrary storage content": [
+      {
+        "executionId": "6d98ca2a-e8a9-44d5-aead-0fe1fc428b06",
+        "chatSessionId": "sess_847ad821-5527-4db3-977a-1e6c08fc25ad",
+        "timestamp": 1790353031727
+      },
+      {
+        "executionId": "6d98ca2a-e8a9-44d5-aead-0fe1fc428b06",
+        "chatSessionId": "sess_847ad821-5527-4db3-977a-1e6c08fc25ad",
+        "timestamp": 1790355227065
+      }
+    ],
+    "6.4 Write unit tests for persistence error flows": [
+      {
+        "executionId": "6d98ca2a-e8a9-44d5-aead-0fe1fc428b06",
+        "chatSessionId": "sess_847ad821-5527-4db3-977a-1e6c08fc25ad",
+        "timestamp": 1790353033068
+      },
+      {
+        "executionId": "6d98ca2a-e8a9-44d5-aead-0fe1fc428b06",
+        "chatSessionId": "sess_847ad821-5527-4db3-977a-1e6c08fc25ad",
+        "timestamp": 1790355228451
+      }
+    ],
+    "7. Build the Score Grid markup and theme styling": [
+      {
+        "executionId": "6d98ca2a-e8a9-44d5-aead-0fe1fc428b06",
+        "chatSessionId": "sess_847ad821-5527-4db3-977a-1e6c08fc25ad",
+        "timestamp": 1790355672105
+      }
+    ],
+    "8.3 Write property test for invalid entry leaving team total unchanged": [
+      {
+        "executionId": "6d98ca2a-e8a9-44d5-aead-0fe1fc428b06",
+        "chatSessionId": "sess_847ad821-5527-4db3-977a-1e6c08fc25ad",
+        "timestamp": 1790355679357
+      },
+      {
+        "executionId": "6d98ca2a-e8a9-44d5-aead-0fe1fc428b06",
+        "chatSessionId": "sess_847ad821-5527-4db3-977a-1e6c08fc25ad",
+        "timestamp": 1790355815051
+      }
+    ],
+    "8. Implement the Controller and Render layer": [
+      {
+        "executionId": "6d98ca2a-e8a9-44d5-aead-0fe1fc428b06",
+        "chatSessionId": "sess_847ad821-5527-4db3-977a-1e6c08fc25ad",
+        "timestamp": 1790355814239
+      }
+    ],
+    "8.5 Write unit tests for the reset flow": [
+      {
+        "executionId": "6d98ca2a-e8a9-44d5-aead-0fe1fc428b06",
+        "chatSessionId": "sess_847ad821-5527-4db3-977a-1e6c08fc25ad",
+        "timestamp": 1790355825161
+      },
+      {
+        "executionId": "6d98ca2a-e8a9-44d5-aead-0fe1fc428b06",
+        "chatSessionId": "sess_847ad821-5527-4db3-977a-1e6c08fc25ad",
+        "timestamp": 1790356092000
+      }
+    ],
+    "10.1 Write grid-structure and startup integration tests": [
+      {
+        "executionId": "6d98ca2a-e8a9-44d5-aead-0fe1fc428b06",
+        "chatSessionId": "sess_847ad821-5527-4db3-977a-1e6c08fc25ad",
+        "timestamp": 1790355826650
+      },
+      {
+        "executionId": "6d98ca2a-e8a9-44d5-aead-0fe1fc428b06",
+        "chatSessionId": "sess_847ad821-5527-4db3-977a-1e6c08fc25ad",
+        "timestamp": 1790356093391
+      }
+    ],
+    "10.2 Write recalc-latency and readability tests": [
+      {
+        "executionId": "6d98ca2a-e8a9-44d5-aead-0fe1fc428b06",
+        "chatSessionId": "sess_847ad821-5527-4db3-977a-1e6c08fc25ad",
+        "timestamp": 1790355827535
+      },
+      {
+        "executionId": "6d98ca2a-e8a9-44d5-aead-0fe1fc428b06",
+        "chatSessionId": "sess_847ad821-5527-4db3-977a-1e6c08fc25ad",
+        "timestamp": 1790356091081
+      }
+    ],
+    "10.3 Write theme and animation tests": [
+      {
+        "executionId": "6d98ca2a-e8a9-44d5-aead-0fe1fc428b06",
+        "chatSessionId": "sess_847ad821-5527-4db3-977a-1e6c08fc25ad",
+        "timestamp": 1790355828959
+      },
+      {
+        "executionId": "6d98ca2a-e8a9-44d5-aead-0fe1fc428b06",
+        "chatSessionId": "sess_847ad821-5527-4db3-977a-1e6c08fc25ad",
+        "timestamp": 1790356094297
+      }
+    ],
+    "10. Add integration, rendering, and timing tests": [
+      {
+        "executionId": "6d98ca2a-e8a9-44d5-aead-0fe1fc428b06",
+        "chatSessionId": "sess_847ad821-5527-4db3-977a-1e6c08fc25ad",
+        "timestamp": 1790356091138
+      }
+    ]
+  }
+}

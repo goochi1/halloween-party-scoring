@@ -1,0 +1,661 @@
+/* Halloween Party Scoring — theme and layout.
+   Theme tokens + full theme/readability styling (Task 7.2). Icons (7.3) and
+   ambient animations (7.4) are layered on after this. Palette contrast on the
+   #0d0d0d background: cream #f5f0e6 ~= 17:1 (body/score text, AA/AAA), neon
+   green #b5e847 ~= 14:1 (title), orange #f08a24 ~= 8:1, pink #f4a6c8 ~= 11:1 —
+   all clear >=4.5:1 for body text and >=3:1 for large text (Req 7.6, 9.2). */
+
+/* Blackletter display face for the title. Loaded from Google Fonts; if the
+   network/font load fails the fallback stack keeps the neon-green title
+   readable (Req 7.3). Swap keeps the title painted during load. */
+@import url("https://fonts.googleapis.com/css2?family=Pirata+One&display=swap");
+
+:root {
+  --bg: #0d0d0d;
+  --title: #b5e847;
+  --accent-pink: #f4a6c8;
+  --accent-orange: #f08a24;
+  --accent-cream: #f5f0e6;
+
+  /* Warning color for the invalid-cell state hook (toggled by Task 8.2). */
+  --warning: #ff5a5a;
+
+  /* Solid backing for sticky headers so scrolling cells don't bleed through. */
+  --header-bg: #151515;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  min-height: 100vh;
+}
+
+html,
+body {
+  /* Ensure the dark background covers the whole viewport even when content is
+     shorter than the screen. */
+  background: var(--bg);
+}
+
+body {
+  color: var(--accent-cream);
+  font-family: system-ui, sans-serif;
+}
+
+#app {
+  max-width: 1600px;
+  margin: 0 auto;
+  padding: clamp(1rem, 3vw, 3rem);
+  /* Anchor the absolutely-positioned decorative layer to #app (Task 7.3). */
+  position: relative;
+}
+
+/* Keep the real scoreboard content above the decorations on the z-axis so
+   ambient icons never obscure it (Req 9.3). */
+#app > .title,
+#app > #controls,
+#app > #message-banner,
+#app > #score-grid {
+  position: relative;
+  z-index: 1;
+}
+
+.title {
+  color: var(--title);
+  /* Blackletter with a serif fallback stack so the neon-green title survives a
+     font load failure (Req 7.3). */
+  font-family: "Pirata One", "UnifrakturMaguntia", "Blackletter686 BT", serif;
+  font-weight: 400;
+  text-align: center;
+  letter-spacing: 0.02em;
+  line-height: 1.05;
+  margin: 0 0 clamp(1rem, 3vw, 2.5rem);
+  /* Large and prominent — readable from across a room (Req 7.1, 9.1). */
+  font-size: clamp(3rem, 9vw, 8rem);
+  text-shadow: 0 0 18px rgba(181, 232, 71, 0.35);
+}
+
+/* ---- Controls -------------------------------------------------------- */
+
+#controls {
+  display: flex;
+  justify-content: center;
+  margin-bottom: clamp(0.75rem, 2vw, 1.5rem);
+}
+
+#reset-button {
+  font-family: inherit;
+  font-size: clamp(1rem, 1.6vw, 1.5rem);
+  font-weight: 700;
+  color: var(--bg);
+  background: var(--accent-orange);
+  border: 2px solid var(--accent-orange);
+  border-radius: 0.5rem;
+  padding: 0.6em 1.4em;
+  cursor: pointer;
+  transition: filter 0.15s ease, transform 0.05s ease;
+}
+
+#reset-button:hover {
+  filter: brightness(1.1);
+}
+
+#reset-button:active {
+  transform: translateY(1px);
+}
+
+#reset-button:focus-visible {
+  outline: 3px solid var(--accent-cream);
+  outline-offset: 2px;
+}
+
+/* ---- Message banner -------------------------------------------------- */
+
+#message-banner {
+  max-width: 60ch;
+  margin: 0 auto clamp(0.75rem, 2vw, 1.5rem);
+  padding: 0.75em 1.25em;
+  border-radius: 0.5rem;
+  border-left: 6px solid var(--accent-orange);
+  background: #1c1c1c;
+  color: var(--accent-cream);
+  font-size: clamp(0.95rem, 1.3vw, 1.25rem);
+  text-align: center;
+}
+
+/* The [hidden] attribute (set in the markup / toggled by the controller)
+   keeps the banner unobtrusive when there's nothing to say. */
+#message-banner[hidden] {
+  display: none;
+}
+
+/* ---- Score grid ------------------------------------------------------ */
+
+#score-grid {
+  /* Contain the grid within the viewport; scroll internally instead of
+     forcing horizontal page scroll (Req 9.3). */
+  overflow: auto;
+  max-height: 80vh;
+  border-radius: 0.75rem;
+}
+
+.grid-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  table-layout: fixed;
+}
+
+.grid-table th,
+.grid-table td {
+  padding: clamp(0.5rem, 1vw, 1rem);
+  border: 1px solid #262626;
+  text-align: center;
+  vertical-align: middle;
+}
+
+/* ---- Sticky axes (teams-as-rows / games-as-columns) -----------------
+   The grid can scroll inside #score-grid (Req 9.3). Three edges stay
+   pinned so orientation is never lost (Req 4.6, 4.11):
+     - the header row (top) so game names stay visible on vertical scroll,
+     - the leftmost team column (left) so team names stay visible on
+       horizontal scroll,
+     - the rightmost Total column (right) so each team's total is ALWAYS
+       visible even when the grid scrolls horizontally (Req 4.11).
+   Each sticky cell needs a solid --header-bg backing so scrolling cells
+   don't bleed through, and the intersections need a higher z-index so they
+   layer above the single-axis sticky cells at the crossings. */
+
+/* Header row sticky to the top. */
+thead th {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background: var(--header-bg);
+}
+
+/* Leftmost column (row header holding the team-name input) + the top-left
+   corner sticky to the left. */
+.team-label,
+.corner-cell {
+  position: sticky;
+  left: 0;
+  z-index: 2;
+  background: var(--header-bg);
+}
+
+/* Rightmost Total column (body cells) + its header sticky to the right so
+   totals stay on screen at any horizontal scroll (Req 4.11). */
+.team-total,
+.total-label {
+  position: sticky;
+  right: 0;
+  z-index: 2;
+  background: var(--header-bg);
+}
+
+/* Header-row cells that are also stuck on a horizontal edge sit at a sticky
+   crossing and must layer above the single-axis cells. */
+.corner-cell,
+.total-label {
+  z-index: 4;
+}
+
+/* Team row headers — the editable name reads as the row label. Orange accent
+   backing frame; the input itself carries the large type (Req 7.4, 9.1). */
+.team-label {
+  text-align: left;
+  white-space: nowrap;
+  color: var(--accent-orange);
+  font-weight: 700;
+  font-size: clamp(1.5rem, 2.2vw, 2.25rem);
+}
+
+/* Editable team-name input styled to read like a bold row label. Large enough
+   to be room-readable (>=24px effect at wide viewports; Req 9.1), full width of
+   its cell, transparent so the sticky --header-bg shows through, with a subtle
+   border that lights up on focus. maxlength=30 is enforced in the markup. */
+.team-name-input {
+  width: 100%;
+  box-sizing: border-box;
+  font-family: inherit;
+  color: var(--accent-orange);
+  background: transparent;
+  font-weight: 700;
+  font-size: clamp(1.5rem, 2.2vw, 2.25rem);
+  line-height: 1.15;
+  padding: 0.15em 0.3em;
+  border: 2px solid transparent;
+  border-radius: 0.4rem;
+}
+
+/* Placeholder (default "Team A".."Team D") stays legible — dimmed cream, not
+   faint — since it shows whenever no custom name is set. */
+.team-name-input::placeholder {
+  color: var(--accent-cream);
+  opacity: 0.75;
+}
+
+.team-name-input:hover {
+  border-color: rgba(240, 138, 36, 0.4);
+}
+
+.team-name-input:focus {
+  outline: none;
+  border-color: var(--accent-orange);
+  box-shadow: 0 0 0 3px rgba(240, 138, 36, 0.4);
+}
+
+/* Game name column headers — cream, large. */
+.game-label {
+  color: var(--accent-cream);
+  position: relative;
+}
+
+.game-name {
+  display: block;
+  font-weight: 700;
+  font-size: clamp(1.5rem, 2vw, 2.25rem);
+  line-height: 1.15;
+}
+
+/* Matchup text uses the pink accent (large text, contrast ~11:1). Retained for
+   any inline matchup rendering; the primary matchup surface is the overlay. */
+.game-matchup {
+  display: block;
+  margin-top: 0.25em;
+  color: var(--accent-pink);
+  font-weight: 600;
+  font-size: clamp(1rem, 1.4vw, 1.4rem);
+  line-height: 1.2;
+}
+
+/* ---- Matchup toggle (head-to-head game headers) ---------------------- */
+
+/* Small icon button inside a game header — accent colored, visible but not
+   overwhelming, keyboard-focusable, and laid out so it doesn't disrupt the
+   game name above it. */
+.matchup-toggle {
+  display: inline-block;
+  margin-top: 0.35em;
+  font-family: inherit;
+  font-size: clamp(1rem, 1.4vw, 1.5rem);
+  line-height: 1;
+  color: var(--accent-pink);
+  background: transparent;
+  border: 2px solid var(--accent-pink);
+  border-radius: 0.4rem;
+  padding: 0.15em 0.4em;
+  cursor: pointer;
+  transition: filter 0.15s ease, transform 0.05s ease;
+}
+
+.matchup-toggle:hover {
+  filter: brightness(1.15);
+}
+
+.matchup-toggle:active {
+  transform: translateY(1px);
+}
+
+.matchup-toggle:focus-visible {
+  outline: 3px solid var(--accent-cream);
+  outline-offset: 2px;
+}
+
+/* ---- Score cells ----------------------------------------------------- */
+
+.score-cell-wrap {
+  padding: clamp(0.35rem, 0.8vw, 0.75rem);
+}
+
+.score-cell {
+  width: 100%;
+  min-width: 3ch;
+  box-sizing: border-box;
+  font-family: inherit;
+  /* Cream numbers on dark, large and centered (Req 9.1, 9.4). */
+  color: var(--accent-cream);
+  background: #141414;
+  text-align: center;
+  font-weight: 700;
+  font-size: clamp(1.6rem, 2.4vw, 2.5rem);
+  padding: 0.35em 0.2em;
+  border: 2px solid var(--accent-pink);
+  border-radius: 0.4rem;
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
+/* Hide spinner buttons so the large numbers stay legible/centered. */
+.score-cell::-webkit-outer-spin-button,
+.score-cell::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.score-cell:focus {
+  outline: none;
+  border-color: var(--accent-orange);
+  box-shadow: 0 0 0 3px rgba(240, 138, 36, 0.4);
+}
+
+/* Error-state hook toggled by the controller (Task 8.2) when input is
+   rejected — defined here, applied there. */
+.score-cell.invalid {
+  border-color: var(--warning);
+  box-shadow: 0 0 0 3px rgba(255, 90, 90, 0.45);
+}
+
+/* ---- Team totals (right-hand column) --------------------------------
+   The rightmost column carries each team's running total. It is the focal
+   readout of the board (Req 4.11) so it is the biggest, boldest, neon-green
+   text, set off from the score cells by a heavy accent left border and a
+   slightly distinct backing. Both the "Total" header (.total-label) and the
+   per-row value (.team-total) share the prominent styling and the right-edge
+   sticky behavior declared above.
+
+   `.totals-label` is grouped in here as an alias of `.total-label` so the
+   prominent header styling applies under either name. */
+
+.team-total,
+.total-label,
+.totals-label {
+  color: var(--title);
+  font-weight: 800;
+  border-left: 4px solid var(--accent-orange);
+  background: #131a08; /* faint green-tinted dark so the column reads as one */
+}
+
+/* The Total header and per-team value: very large, room-readable (Req 9.1). */
+.team-total {
+  font-size: clamp(2rem, 3.5vw, 3.5rem);
+  line-height: 1.05;
+  white-space: nowrap;
+}
+
+.total-label,
+.totals-label {
+  font-size: clamp(1.5rem, 2vw, 2.25rem);
+  line-height: 1.1;
+}
+
+/* The header/total intersection keeps the heavier backing; re-assert its
+   sticky-crossing z-index (declared above) sits over the plain cells. */
+
+/* ---- Matchup announcement overlay (Task 15.2 styling) ---------------
+   A dismissible, centered panel over a dark semi-opaque backdrop. Hidden by
+   default via the [hidden] attribute in the markup; the controller (Task 15.3)
+   populates #matchup-content and toggles [hidden]. Content is very large and
+   high-contrast so the matchup reads across a room (Req 9.1, 12.6). */
+
+.matchup-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000; /* above the scoreboard and all decorations */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(1rem, 4vw, 4rem);
+  background: rgba(0, 0, 0, 0.82);
+}
+
+/* [hidden] must win over display:flex above so the overlay is truly hidden. */
+#matchup-overlay[hidden],
+.matchup-overlay[hidden] {
+  display: none;
+}
+
+.matchup-overlay-inner {
+  max-width: 90vw;
+  max-height: 90vh;
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(1rem, 3vw, 2.5rem);
+  padding: clamp(1.5rem, 5vw, 4rem);
+  border: 3px solid var(--accent-orange);
+  border-radius: 1rem;
+  background: var(--header-bg);
+  box-shadow: 0 0 40px rgba(0, 0, 0, 0.7);
+  text-align: center;
+}
+
+/* Small pink heading above the big matchup content — labels the dialog and
+   signals the "vs / matchup" affordance (large text, contrast ~11:1). */
+.matchup-heading {
+  margin: 0;
+  color: var(--accent-pink);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  font-size: clamp(1.25rem, 2.5vw, 2.5rem);
+  line-height: 1.1;
+}
+
+#matchup-content,
+.matchup-content {
+  color: var(--title);
+  font-weight: 800;
+  line-height: 1.15;
+  /* Very large, room-readable (Req 9.1, 12.6). */
+  font-size: clamp(2rem, 6vw, 6rem);
+  text-shadow: 0 0 18px rgba(181, 232, 71, 0.35);
+}
+
+#matchup-dismiss,
+.matchup-dismiss {
+  font-family: inherit;
+  font-size: clamp(1rem, 1.8vw, 1.75rem);
+  font-weight: 700;
+  color: var(--bg);
+  background: var(--accent-orange);
+  border: 2px solid var(--accent-orange);
+  border-radius: 0.5rem;
+  padding: 0.6em 1.6em;
+  cursor: pointer;
+  transition: filter 0.15s ease, transform 0.05s ease;
+}
+
+#matchup-dismiss:hover,
+.matchup-dismiss:hover {
+  filter: brightness(1.1);
+}
+
+#matchup-dismiss:active,
+.matchup-dismiss:active {
+  transform: translateY(1px);
+}
+
+#matchup-dismiss:focus-visible,
+.matchup-dismiss:focus-visible {
+  outline: 3px solid var(--accent-cream);
+  outline-offset: 2px;
+}
+
+/* ---- Decorative icon layer (Task 7.3) -------------------------------- */
+
+/* Ambient Halloween icons. The whole layer is aria-hidden in the markup and
+   non-interactive here, sitting BEHIND the scoreboard (z-index:0 vs the
+   content's z-index:1) so it never overlaps, obscures, or shifts the grid /
+   totals (Req 7.5, 9.3). Icons are pinned to the corners/margins of #app. */
+.decorations {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+/* Star field spans the whole layer; individual stars are placed via CSS vars. */
+.stars {
+  position: absolute;
+  inset: 0;
+}
+
+/* Each decorative icon is positioned from its inline --deco-* custom props.
+   Defaults keep an un-pinned icon harmlessly in the top-left. */
+.deco {
+  position: absolute;
+  top: var(--deco-top, auto);
+  right: var(--deco-right, auto);
+  bottom: var(--deco-bottom, auto);
+  left: var(--deco-left, auto);
+  display: inline-block;
+  line-height: 1;
+  opacity: 0.5;
+  /* Sit behind the scoreboard content; ambient only. */
+  filter: drop-shadow(0 0 6px rgba(0, 0, 0, 0.6));
+}
+
+/* Icon sizing (reasonable, room-readable but unobtrusive in the margins). */
+.icon-svg,
+.icon-emoji {
+  display: block;
+  width: clamp(2.5rem, 5vw, 4.5rem);
+  height: clamp(2.5rem, 5vw, 4.5rem);
+}
+
+.icon-emoji {
+  font-size: clamp(2.2rem, 4.5vw, 4rem);
+  line-height: 1;
+  text-align: center;
+}
+
+/* Emoji fallback strategy (Req 8.5): when the inline <svg> renders, the emoji
+   is hidden; if the <svg> is absent/failed the emoji is shown instead. The
+   sibling combinator hides the emoji only when a preceding .icon-svg exists,
+   so an icon whose SVG fails to render still shows its emoji and a failed
+   decoration is simply omitted (no impact on scores). */
+.icon-emoji {
+  display: none;
+}
+.icon-svg + .icon-emoji {
+  display: none;
+}
+.icon:not(:has(.icon-svg)) .icon-emoji {
+  display: block;
+}
+
+/* Individual placements: stars carry their own coordinate + scale vars. */
+.deco-star {
+  top: var(--star-top, 10%);
+  left: var(--star-left, 10%);
+  transform: scale(var(--star-scale, 1));
+  opacity: 0.7;
+}
+.deco-star .icon-svg,
+.deco-star .icon-emoji {
+  width: clamp(0.9rem, 1.6vw, 1.6rem);
+  height: clamp(0.9rem, 1.6vw, 1.6rem);
+}
+.deco-star .icon-emoji {
+  font-size: clamp(0.9rem, 1.6vw, 1.6rem);
+}
+
+/* The spider web is a touch larger to frame the corner; slightly bolder. */
+.deco-web {
+  opacity: 0.4;
+}
+.deco-web .icon-svg,
+.deco-web .icon-emoji {
+  width: clamp(4rem, 8vw, 7rem);
+  height: clamp(4rem, 8vw, 7rem);
+}
+
+.deco-candle {
+  opacity: 0.6;
+}
+
+/* Structural utility (Task 7.1): hide content visually while keeping it
+   available to assistive tech. Full theme/readability styling is Task 7.2. */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ==========================================================================
+   Task 7.4 — Ambient animations (Req 8.1, 8.3, 8.4)
+   Motion is confined to decorative elements only; the Score_Grid, cells,
+   totals, and title never animate (Req 8.3). Every animation uses ONLY
+   `transform` and `opacity` so it is GPU-composited and can hold >=30fps
+   (Req 8.2 target). Displacement stays well under 15% of the viewport in
+   either axis per cycle (Req 8.4) — the largest translate below is 3vh.
+   ========================================================================== */
+
+/* Flickering candle flame: subtle opacity flutter with a tiny vertical
+   scale/translate, looping. Transform + opacity only. */
+@keyframes deco-candle-flicker {
+  0%   { opacity: 0.85; transform: scaleY(1)    translateY(0); }
+  20%  { opacity: 1;    transform: scaleY(1.06) translateY(-0.4px); }
+  40%  { opacity: 0.7;  transform: scaleY(0.96) translateY(0.3px); }
+  60%  { opacity: 0.95; transform: scaleY(1.03) translateY(-0.2px); }
+  80%  { opacity: 0.65; transform: scaleY(0.98) translateY(0.2px); }
+  100% { opacity: 0.85; transform: scaleY(1)    translateY(0); }
+}
+
+.deco-candle-flame {
+  /* Scale from the base of the flame so the flutter reads as a flame, not a
+     jump. transform-box keeps this correct for the SVG <g>. */
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+  animation: deco-candle-flicker 2.4s ease-in-out infinite;
+  will-change: opacity, transform;
+}
+
+/* Drifting spider: gentle bob/sway as if hanging on its thread. Uses small
+   translate values (max ~3vh vertical, ~0.6vw horizontal) plus a tiny rotate,
+   all far below the 15vw/15vh cap (Req 8.4). */
+@keyframes deco-spider-drift {
+  0%   { transform: translate(0, 0)          rotate(0deg); }
+  25%  { transform: translate(0.5vw, 2vh)    rotate(1.5deg); }
+  50%  { transform: translate(0, 3vh)        rotate(0deg); }
+  75%  { transform: translate(-0.5vw, 1.5vh) rotate(-1.5deg); }
+  100% { transform: translate(0, 0)          rotate(0deg); }
+}
+
+.deco-spider {
+  animation: deco-spider-drift 6s ease-in-out infinite;
+  will-change: transform;
+}
+
+/* Twinkling stars: opacity ONLY, so the per-star sizing transform
+   (scale(var(--star-scale))) set on .deco-star is never overridden. */
+@keyframes deco-star-twinkle {
+  0%   { opacity: 0.3; }
+  50%  { opacity: 1; }
+  100% { opacity: 0.3; }
+}
+
+.deco-star {
+  animation: deco-star-twinkle 3s ease-in-out infinite;
+  will-change: opacity;
+}
+
+/* Stagger the star field so they don't all pulse in lockstep. */
+.deco-star:nth-child(1) { animation-delay: 0s; }
+.deco-star:nth-child(2) { animation-delay: 0.6s; }
+.deco-star:nth-child(3) { animation-delay: 1.2s; }
+.deco-star:nth-child(4) { animation-delay: 1.8s; }
+.deco-star:nth-child(5) { animation-delay: 2.4s; }
+
+/* Honor a user's reduced-motion preference: disable ALL ambient animation. */
+@media (prefers-reduced-motion: reduce) {
+  .deco-candle-flame,
+  .deco-spider,
+  .deco-star {
+    animation: none;
+  }
+}

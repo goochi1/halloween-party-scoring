@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Halloween Party Scoring</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <!-- Single-screen scoreboard. The static grid, totals, title, and reset
+         control below are the structural mount points. The controller
+         reads/populates these existing elements rather than recreating them: it
+         fills cell values from the loaded ScoreMap, resolves team-name inputs,
+         computes the four right-hand Team_Total displays, wires input handlers,
+         the matchup overlay, and the reset flow, and drives the message banner.
+         Team and Game are identifiable for every cell from both the grid layout
+         (row = team, column = game) and the data-team / data-game attributes on
+         each input (Req 4.3, 4.6). -->
+    <main id="app">
+      <!-- Ambient decorative layer (Task 7.3). Purely visual: aria-hidden and
+           pointer-events:none so it never touches the scoreboard's semantics,
+           layout, or interactivity (Req 7.5, 9.3). Positioned absolutely in the
+           corners/margins BEHIND #score-grid via z-index (styles.css). Each icon
+           is an inline <svg role="img"> plus an .icon-emoji fallback span: if a
+           decoration fails to render it is simply omitted without breaking
+           scores (Req 8.5). Task 7.4 animates the flagged hooks below — the
+           candle (.deco-candle / .deco-candle-flame), spider (.deco-spider on
+           .deco-web), and stars (.deco-star inside .stars) — so DO NOT rename
+           these classes. No animation is defined here; static styling only. -->
+      <div class="decorations" aria-hidden="true">
+        <!-- Twinkling star field (animated by 7.4: .deco-star opacity). -->
+        <div class="stars">
+          <span class="icon deco deco-star" style="--star-top: 6%; --star-left: 12%; --star-scale: 1;">
+            <svg class="icon-svg" viewBox="0 0 24 24" role="img" focusable="false" aria-hidden="true">
+              <path d="M12 2l2.4 6.6L21 11l-6.6 2.4L12 20l-2.4-6.6L3 11l6.6-2.4z" fill="var(--accent-cream)"/>
+            </svg>
+            <span class="icon-emoji" role="img" aria-hidden="true">⭐</span>
+          </span>
+          <span class="icon deco deco-star" style="--star-top: 14%; --star-left: 84%; --star-scale: 0.7;">
+            <svg class="icon-svg" viewBox="0 0 24 24" role="img" focusable="false" aria-hidden="true">
+              <path d="M12 2l2.4 6.6L21 11l-6.6 2.4L12 20l-2.4-6.6L3 11l6.6-2.4z" fill="var(--accent-cream)"/>
+            </svg>
+            <span class="icon-emoji" role="img" aria-hidden="true">⭐</span>
+          </span>
+          <span class="icon deco deco-star" style="--star-top: 30%; --star-left: 4%; --star-scale: 0.55;">
+            <svg class="icon-svg" viewBox="0 0 24 24" role="img" focusable="false" aria-hidden="true">
+              <path d="M12 2l2.4 6.6L21 11l-6.6 2.4L12 20l-2.4-6.6L3 11l6.6-2.4z" fill="var(--accent-cream)"/>
+            </svg>
+            <span class="icon-emoji" role="img" aria-hidden="true">⭐</span>
+          </span>
+          <span class="icon deco deco-star" style="--star-top: 72%; --star-left: 92%; --star-scale: 0.85;">
+            <svg class="icon-svg" viewBox="0 0 24 24" role="img" focusable="false" aria-hidden="true">
+              <path d="M12 2l2.4 6.6L21 11l-6.6 2.4L12 20l-2.4-6.6L3 11l6.6-2.4z" fill="var(--accent-cream)"/>
+            </svg>
+            <span class="icon-emoji" role="img" aria-hidden="true">⭐</span>
+          </span>
+          <span class="icon deco deco-star" style="--star-top: 88%; --star-left: 20%; --star-scale: 0.6;">
+            <svg class="icon-svg" viewBox="0 0 24 24" role="img" focusable="false" aria-hidden="true">
+              <path d="M12 2l2.4 6.6L21 11l-6.6 2.4L12 20l-2.4-6.6L3 11l6.6-2.4z" fill="var(--accent-cream)"/>
+            </svg>
+            <span class="icon-emoji" role="img" aria-hidden="true">⭐</span>
+          </span>
+        </div>
+
+        <!-- Jack-o-lantern — pumpkin orange. -->
+        <span class="icon deco deco-pumpkin" style="--deco-top: 4%; --deco-left: 3%;">
+          <svg class="icon-svg" viewBox="0 0 64 64" role="img" focusable="false" aria-hidden="true">
+            <rect x="29" y="6" width="6" height="10" rx="2" fill="#5a7d32"/>
+            <ellipse cx="32" cy="38" rx="26" ry="22" fill="var(--accent-orange)"/>
+            <ellipse cx="18" cy="38" rx="8" ry="20" fill="#d9761c"/>
+            <ellipse cx="46" cy="38" rx="8" ry="20" fill="#d9761c"/>
+            <path d="M18 32l8 6-8 3z" fill="#1a1a1a"/>
+            <path d="M46 32l-8 6 8 3z" fill="#1a1a1a"/>
+            <path d="M24 48q8 -8 16 0 -8 4 -16 0z" fill="#1a1a1a"/>
+            <path d="M30 46h4v4h-4z" fill="#1a1a1a"/>
+          </svg>
+          <span class="icon-emoji" role="img" aria-hidden="true">🎃</span>
+        </span>
+
+        <!-- Black cat — with green eyes (accent). -->
+        <span class="icon deco deco-cat" style="--deco-top: 3%; --deco-right: 4%;">
+          <svg class="icon-svg" viewBox="0 0 64 64" role="img" focusable="false" aria-hidden="true">
+            <path d="M14 20l6-12 8 10h8l8-10 6 12v26a6 6 0 0 1-6 6H20a6 6 0 0 1-6-6z" fill="#111"/>
+            <path d="M40 44q10 4 14 14-8 -2 -14 -6z" fill="#111"/>
+            <ellipse cx="26" cy="30" rx="3" ry="5" fill="var(--title)"/>
+            <ellipse cx="38" cy="30" rx="3" ry="5" fill="var(--title)"/>
+            <path d="M8 34l10 2-10 3zM56 34l-10 2 10 3z" stroke="#333" stroke-width="1" fill="none"/>
+          </svg>
+          <span class="icon-emoji" role="img" aria-hidden="true">🐈‍⬛</span>
+        </span>
+
+        <!-- Witch hat — pink band accent. -->
+        <span class="icon deco deco-witch-hat" style="--deco-top: 40%; --deco-left: 2%;">
+          <svg class="icon-svg" viewBox="0 0 64 64" role="img" focusable="false" aria-hidden="true">
+            <path d="M32 6l10 40H22z" fill="#1a1a1a"/>
+            <ellipse cx="32" cy="48" rx="28" ry="7" fill="#1a1a1a"/>
+            <rect x="22" y="40" width="20" height="6" fill="var(--accent-pink)"/>
+            <path d="M40 42l6-3-2 5z" fill="var(--accent-orange)"/>
+          </svg>
+          <span class="icon-emoji" role="img" aria-hidden="true">🧙</span>
+        </span>
+
+        <!-- Potion bottle — green potion, cork. -->
+        <span class="icon deco deco-potion" style="--deco-top: 44%; --deco-right: 3%;">
+          <svg class="icon-svg" viewBox="0 0 64 64" role="img" focusable="false" aria-hidden="true">
+            <rect x="27" y="8" width="10" height="8" rx="2" fill="#8a5a2b"/>
+            <path d="M28 16h8v8l8 12a12 12 0 0 1-24 0l8-12z" fill="#6fcf5f" opacity="0.9"/>
+            <path d="M22 40a12 12 0 0 0 20 6l-2-6z" fill="#3fae2e"/>
+            <circle cx="28" cy="42" r="2" fill="var(--accent-cream)" opacity="0.8"/>
+            <circle cx="34" cy="46" r="1.5" fill="var(--accent-cream)" opacity="0.8"/>
+          </svg>
+          <span class="icon-emoji" role="img" aria-hidden="true">🧪</span>
+        </span>
+
+        <!-- Skull — cream. -->
+        <span class="icon deco deco-skull" style="--deco-bottom: 5%; --deco-left: 4%;">
+          <svg class="icon-svg" viewBox="0 0 64 64" role="img" focusable="false" aria-hidden="true">
+            <path d="M32 6c-13 0-22 9-22 22 0 8 4 13 8 16v6a4 4 0 0 0 4 4h20a4 4 0 0 0 4-4v-6c4-3 8-8 8-16 0-13-9-22-22-22z" fill="var(--accent-cream)"/>
+            <circle cx="23" cy="30" r="5" fill="#1a1a1a"/>
+            <circle cx="41" cy="30" r="5" fill="#1a1a1a"/>
+            <path d="M32 38l-3 6h6z" fill="#1a1a1a"/>
+            <path d="M26 50v6M32 50v6M38 50v6" stroke="#1a1a1a" stroke-width="2"/>
+          </svg>
+          <span class="icon-emoji" role="img" aria-hidden="true">💀</span>
+        </span>
+
+        <!-- Bones — cream crossbones. -->
+        <span class="icon deco deco-bones" style="--deco-bottom: 7%; --deco-right: 6%;">
+          <svg class="icon-svg" viewBox="0 0 64 64" role="img" focusable="false" aria-hidden="true">
+            <g stroke="var(--accent-cream)" stroke-width="7" stroke-linecap="round">
+              <line x1="16" y1="16" x2="48" y2="48"/>
+              <line x1="48" y1="16" x2="16" y2="48"/>
+            </g>
+            <g fill="var(--accent-cream)">
+              <circle cx="14" cy="14" r="5"/><circle cx="20" cy="12" r="5"/>
+              <circle cx="50" cy="14" r="5"/><circle cx="44" cy="12" r="5"/>
+              <circle cx="14" cy="50" r="5"/><circle cx="20" cy="52" r="5"/>
+              <circle cx="50" cy="50" r="5"/><circle cx="44" cy="52" r="5"/>
+            </g>
+          </svg>
+          <span class="icon-emoji" role="img" aria-hidden="true">🦴</span>
+        </span>
+
+        <!-- Moth — cream/dusty wings. -->
+        <span class="icon deco deco-moth" style="--deco-top: 62%; --deco-left: 8%;">
+          <svg class="icon-svg" viewBox="0 0 64 64" role="img" focusable="false" aria-hidden="true">
+            <ellipse cx="32" cy="34" rx="4" ry="12" fill="#7a6f5a"/>
+            <path d="M32 24C20 14 6 20 8 34c10 6 20 2 24-6z" fill="var(--accent-cream)" opacity="0.9"/>
+            <path d="M32 24C44 14 58 20 56 34c-10 6-20 2-24-6z" fill="var(--accent-cream)" opacity="0.9"/>
+            <path d="M32 34C22 40 12 40 12 46c8 4 16 0 20-6z" fill="#d8cdb5"/>
+            <path d="M32 34C42 40 52 40 52 46c-8 4-16 0-20-6z" fill="#d8cdb5"/>
+            <path d="M32 22l-3-6M32 22l3-6" stroke="#7a6f5a" stroke-width="2"/>
+          </svg>
+          <span class="icon-emoji" role="img" aria-hidden="true">🦋</span>
+        </span>
+
+        <!-- Spider web anchor (top-right corner). Anchors the drifting spider. -->
+        <span class="icon deco deco-web" style="--deco-top: 0%; --deco-right: 0%;">
+          <svg class="icon-svg" viewBox="0 0 64 64" role="img" focusable="false" aria-hidden="true">
+            <g stroke="var(--accent-cream)" stroke-width="1.4" fill="none" opacity="0.75">
+              <path d="M2 2L2 62M2 2L62 2M2 2L46 46M2 2L2 34M2 2L34 2"/>
+              <path d="M2 14q10 2 12 12M2 26q20 4 24 24M2 40q26 8 30 20M14 2q2 10 12 12M26 2q4 20 24 24M40 2q8 26 20 30"/>
+            </g>
+          </svg>
+          <span class="icon-emoji" role="img" aria-hidden="true">🕸️</span>
+        </span>
+
+        <!-- Spider — hangs from the web; animated to drift by 7.4. -->
+        <span class="icon deco deco-spider" style="--deco-top: 8%; --deco-right: 10%;">
+          <svg class="icon-svg" viewBox="0 0 64 64" role="img" focusable="false" aria-hidden="true">
+            <line x1="32" y1="0" x2="32" y2="18" stroke="var(--accent-cream)" stroke-width="1"/>
+            <ellipse cx="32" cy="34" rx="9" ry="11" fill="#111"/>
+            <circle cx="32" cy="22" r="6" fill="#111"/>
+            <circle cx="30" cy="21" r="1.5" fill="var(--accent-orange)"/>
+            <circle cx="34" cy="21" r="1.5" fill="var(--accent-orange)"/>
+            <g stroke="#111" stroke-width="2.5" fill="none" stroke-linecap="round">
+              <path d="M23 28q-10 -4 -14 4M23 34q-12 0 -15 8M41 28q10 -4 14 4M41 34q12 0 15 8"/>
+            </g>
+          </svg>
+          <span class="icon-emoji" role="img" aria-hidden="true">🕷️</span>
+        </span>
+
+        <!-- Candle — cream body, orange flame; flame animated (flicker) by 7.4. -->
+        <span class="icon deco deco-candle" style="--deco-bottom: 6%; --deco-left: 46%;">
+          <svg class="icon-svg" viewBox="0 0 64 64" role="img" focusable="false" aria-hidden="true">
+            <rect x="24" y="24" width="16" height="34" rx="3" fill="var(--accent-cream)"/>
+            <path d="M24 30q8 -4 16 0v3q-8 -4 -16 0z" fill="#e6dcc4"/>
+            <rect x="31" y="18" width="2" height="8" fill="#3a2c14"/>
+            <g class="deco-candle-flame">
+              <path d="M32 4c4 6 6 9 6 13a6 6 0 0 1-12 0c0-4 2-7 6-13z" fill="var(--accent-orange)"/>
+              <path d="M32 10c2 3 3 5 3 8a3 3 0 0 1-6 0c0-3 1-5 3-8z" fill="#ffd76a"/>
+            </g>
+          </svg>
+          <span class="icon-emoji" role="img" aria-hidden="true">🕯️</span>
+        </span>
+      </div>
+
+      <h1 class="title">HALLOWEEN PARTY</h1>
+
+      <!-- Non-blocking, dismissible status/error banner (Req 5.2, 5.5, 5.6, 6.4, 10.5). -->
+      <div id="message-banner" role="status" aria-live="polite" hidden></div>
+
+      <!-- Score grid: rows are Teams, columns are Games, plus a rightmost
+           Team_Total column so each team's running total stays prominent and
+           always visible in its own row (Req 4.2, 4.3, 4.4, 4.5). Rendered as a
+           table so team/game labels stay associated with each cell. Head-to-head
+           games (Ghost Catcher, Pumpkin Toss, Quiet Place) carry a matchup toggle
+           control in their column header (Req 4.7, 12.1, 12.2); the other games
+           have none. The controller (Tasks 13.2 / 15.3) fills cell values, team
+           names, and totals from state. -->
+      <div id="score-grid">
+        <table class="grid-table">
+          <caption class="visually-hidden">
+            Halloween party scores: one row per team across six game columns, with
+            each team's running total in the rightmost Total column
+          </caption>
+          <thead>
+            <tr>
+              <th scope="col" class="corner-cell">Team</th>
+              <th scope="col" class="game-label" data-game-label="abcd-names">
+                <span class="game-name">ABCD Names</span>
+              </th>
+              <th scope="col" class="game-label" data-game-label="bone-finder">
+                <span class="game-name">Bone Finder</span>
+              </th>
+              <th scope="col" class="game-label" data-game-label="ghost-catcher">
+                <span class="game-name">Ghost Catcher</span>
+                <button type="button" class="matchup-toggle" data-matchup-toggle="ghost-catcher"
+                  data-matchup="Team A vs Team B &amp; Team C vs Team D"
+                  title="Team A vs Team B &amp; Team C vs Team D"
+                  aria-label="Show Ghost Catcher matchup">⚔️</button>
+              </th>
+              <th scope="col" class="game-label" data-game-label="pumpkin-toss">
+                <span class="game-name">Pumpkin Toss</span>
+                <button type="button" class="matchup-toggle" data-matchup-toggle="pumpkin-toss"
+                  data-matchup="Team A vs Team C &amp; Team B vs Team D"
+                  title="Team A vs Team C &amp; Team B vs Team D"
+                  aria-label="Show Pumpkin Toss matchup">⚔️</button>
+              </th>
+              <th scope="col" class="game-label" data-game-label="quiet-place">
+                <span class="game-name">Quiet Place</span>
+                <button type="button" class="matchup-toggle" data-matchup-toggle="quiet-place"
+                  data-matchup="Team A vs Team D &amp; Team B vs Team C"
+                  title="Team A vs Team D &amp; Team B vs Team C"
+                  aria-label="Show Quiet Place matchup">⚔️</button>
+              </th>
+              <th scope="col" class="game-label" data-game-label="human-centipede">
+                <span class="game-name">Human Centipede</span>
+              </th>
+              <th scope="col" class="total-label">Total</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <!-- Team A -->
+            <tr class="team-row" data-team-row="A">
+              <th scope="row" class="team-label" data-team-label="A">
+                <input class="team-name-input" type="text" maxlength="30"
+                  data-team-name="A" placeholder="Team A" value=""
+                  aria-label="Team A name" />
+              </th>
+              <td class="score-cell-wrap">
+                <input class="score-cell" type="number" inputmode="numeric" step="1"
+                  min="0" max="999" data-team="A" data-game="abcd-names"
+                  id="cell-A-abcd-names" aria-label="Team A — ABCD Names score" />
+              </td>
+              <td class="score-cell-wrap">
+                <input class="score-cell" type="number" inputmode="numeric" step="1"
+                  min="0" max="999" data-team="A" data-game="bone-finder"
+                  id="cell-A-bone-finder" aria-label="Team A — Bone Finder score" />
+              </td>
+              <td class="score-cell-wrap">
+                <input class="score-cell" type="number" inputmode="numeric" step="1"
+                  min="0" max="999" data-team="A" data-game="ghost-catcher"
+                  id="cell-A-ghost-catcher" aria-label="Team A — Ghost Catcher score" />
+              </td>
+              <td class="score-cell-wrap">
+                <input class="score-cell" type="number" inputmode="numeric" step="1"
+                  min="0" max="999" data-team="A" data-game="pumpkin-toss"
+                  id="cell-A-pumpkin-toss" aria-label="Team A — Pumpkin Toss score" />
+              </td>
+              <td class="score-cell-wrap">
+                <input class="score-cell" type="number" inputmode="numeric" step="1"
+                  min="-999" max="999" data-team="A" data-game="quiet-place"
+                  id="cell-A-quiet-place" aria-label="Team A — Quiet Place score" />
+              </td>
+              <td class="score-cell-wrap">
+                <input class="score-cell" type="number" inputmode="numeric" step="1"
+                  min="0" max="999" data-team="A" data-game="human-centipede"
+                  id="cell-A-human-centipede" aria-label="Team A — Human Centipede score" />
+              </td>
+              <td class="team-total" data-total="A" aria-label="Team A total">0</td>
+            </tr>
+
+            <!-- Team B -->
+            <tr class="team-row" data-team-row="B">
+              <th scope="row" class="team-label" data-team-label="B">
+                <input class="team-name-input" type="text" maxlength="30"
+                  data-team-name="B" placeholder="Team B" value=""
+                  aria-label="Team B name" />
+              </th>
+              <td class="score-cell-wrap">
+                <input class="score-cell" type="number" inputmode="numeric" step="1"
+                  min="0" max="999" data-team="B" data-game="abcd-names"
+                  id="cell-B-abcd-names" aria-label="Team B — ABCD Names score" />
+              </td>
+              <td class="score-cell-wrap">
+                <input class="score-cell" type="number" inputmode="numeric" step="1"
+                  min="0" max="999" data-team="B" data-game="bone-finder"
+                  id="cell-B-bone-finder" aria-label="Team B — Bone Finder score" />
+              </td>
+              <td class="score-cell-wrap">
+                <input class="score-cell" type="number" inputmode="numeric" step="1"
+                  min="0" max="999" data-team="B" data-game="ghost-catcher"
+                  id="cell-B-ghost-catcher" aria-label="Team B — Ghost Catcher score" />
+              </td>
+              <td class="score-cell-wrap">
+                <input class="score-cell" type="number" inputmode="numeric" step="1"
+                  min="0" max="999" data-team="B" data-game="pumpkin-toss"
+                  id="cell-B-pumpkin-toss" aria-label="Team B — Pumpkin Toss score" />
+              </td>
+              <td class="score-cell-wrap">
+                <input class="score-cell" type="number" inputmode="numeric" step="1"
+                  min="-999" max="999" data-team="B" data-game="quiet-place"
+                  id="cell-B-quiet-place" aria-label="Team B — Quiet Place score" />
+              </td>
+              <td class="score-cell-wrap">
+                <input class="score-cell" type="number" inputmode="numeric" step="1"
+                  min="0" max="999" data-team="B" data-game="human-centipede"
+                  id="cell-B-human-centipede" aria-label="Team B — Human Centipede score" />
+              </td>
+              <td class="team-total" data-total="B" aria-label="Team B total">0</td>
+            </tr>
+
+            <!-- Team C -->
+            <tr class="team-row" data-team-row="C">
+              <th scope="row" class="team-label" data-team-label="C">
+                <input class="team-name-input" type="text" maxlength="30"
+                  data-team-name="C" placeholder="Team C" value=""
+                  aria-label="Team C name" />
+              </th>
+              <td class="score-cell-wrap">
+                <input class="score-cell" type="number" inputmode="numeric" step="1"
+                  min="0" max="999" data-team="C" data-game="abcd-names"
+                  id="cell-C-abcd-names" aria-label="Team C — ABCD Names score" />
+              </td>
+              <td class="score-cell-wrap">
+                <input class="score-cell" type="number" inputmode="numeric" step="1"
+                  min="0" max="999" data-team="C" data-game="bone-finder"
+                  id="cell-C-bone-finder" aria-label="Team C — Bone Finder score" />
+              </td>
+              <td class="score-cell-wrap">
+                <input class="score-cell" type="number" inputmode="numeric" step="1"
+                  min="0" max="999" data-team="C" data-game="ghost-catcher"
+                  id="cell-C-ghost-catcher" aria-label="Team C — Ghost Catcher score" />
+              </td>
+              <td class="score-cell-wrap">
+                <input class="score-cell" type="number" inputmode="numeric" step="1"
+                  min="0" max="999" data-team="C" data-game="pumpkin-toss"
+                  id="cell-C-pumpkin-toss" aria-label="Team C — Pumpkin Toss score" />
+              </td>
+              <td class="score-cell-wrap">
+                <input class="score-cell" type="number" inputmode="numeric" step="1"
+                  min="-999" max="999" data-team="C" data-game="quiet-place"
+                  id="cell-C-quiet-place" aria-label="Team C — Quiet Place score" />
+              </td>
+              <td class="score-cell-wrap">
+                <input class="score-cell" type="number" inputmode="numeric" step="1"
+                  min="0" max="999" data-team="C" data-game="human-centipede"
+                  id="cell-C-human-centipede" aria-label="Team C — Human Centipede score" />
+              </td>
+              <td class="team-total" data-total="C" aria-label="Team C total">0</td>
+            </tr>
+
+            <!-- Team D -->
+            <tr class="team-row" data-team-row="D">
+              <th scope="row" class="team-label" data-team-label="D">
+                <input class="team-name-input" type="text" maxlength="30"
+                  data-team-name="D" placeholder="Team D" value=""
+                  aria-label="Team D name" />
+              </th>
+              <td class="score-cell-wrap">
+                <input class="score-cell" type="number" inputmode="numeric" step="1"
+                  min="0" max="999" data-team="D" data-game="abcd-names"
+                  id="cell-D-abcd-names" aria-label="Team D — ABCD Names score" />
+              </td>
+              <td class="score-cell-wrap">
+                <input class="score-cell" type="number" inputmode="numeric" step="1"
+                  min="0" max="999" data-team="D" data-game="bone-finder"
+                  id="cell-D-bone-finder" aria-label="Team D — Bone Finder score" />
+              </td>
+              <td class="score-cell-wrap">
+                <input class="score-cell" type="number" inputmode="numeric" step="1"
+                  min="0" max="999" data-team="D" data-game="ghost-catcher"
+                  id="cell-D-ghost-catcher" aria-label="Team D — Ghost Catcher score" />
+              </td>
+              <td class="score-cell-wrap">
+                <input class="score-cell" type="number" inputmode="numeric" step="1"
+                  min="0" max="999" data-team="D" data-game="pumpkin-toss"
+                  id="cell-D-pumpkin-toss" aria-label="Team D — Pumpkin Toss score" />
+              </td>
+              <td class="score-cell-wrap">
+                <input class="score-cell" type="number" inputmode="numeric" step="1"
+                  min="-999" max="999" data-team="D" data-game="quiet-place"
+                  id="cell-D-quiet-place" aria-label="Team D — Quiet Place score" />
+              </td>
+              <td class="score-cell-wrap">
+                <input class="score-cell" type="number" inputmode="numeric" step="1"
+                  min="0" max="999" data-team="D" data-game="human-centipede"
+                  id="cell-D-human-centipede" aria-label="Team D — Human Centipede score" />
+              </td>
+              <td class="team-total" data-total="D" aria-label="Team D total">0</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Matchup announcement overlay (Req 12.3–12.6). Hidden by default; the
+           controller (Task 15.3) populates #matchup-content via
+           formatMatchup(...) with current team names and toggles [hidden]. The
+           dismiss control (#matchup-dismiss) hides it without touching scores or
+           names. Styling is applied in Task 15.2. -->
+      <div id="matchup-overlay" class="matchup-overlay" role="dialog" aria-modal="false"
+        aria-labelledby="matchup-heading" hidden>
+        <div class="matchup-overlay-inner">
+          <p id="matchup-heading" class="matchup-heading">⚔️ Matchup</p>
+          <div id="matchup-content" class="matchup-content" aria-live="polite"></div>
+          <button id="matchup-dismiss" type="button" class="matchup-dismiss"
+            aria-label="Dismiss matchup">Dismiss</button>
+        </div>
+      </div>
+    </main>
+    <!-- Classic (non-module) script so the app runs when index.html is opened
+         directly from the filesystem (file://), where ES modules are blocked.
+         app.browser.js is generated from app.js by `npm run build` — re-run it
+         whenever app.js changes. -->
+    <script src="app.browser.js"></script>
+  </body>
+</html>
