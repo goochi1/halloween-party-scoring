@@ -523,6 +523,17 @@ thead th {
 
 /* Each decorative icon is positioned from its inline --deco-* custom props.
    Defaults keep an un-pinned icon harmlessly in the top-left. */
+/* Bottom-strip decorations are pinned to the bottom of the VIEWPORT (not #app,
+   which only extends as far as the grid). This lands them in the empty space
+   below the scoreboard so the table never covers them. */
+.deco.deco-bottom-fixed {
+  position: fixed;
+  bottom: clamp(0.5rem, 2vh, 2rem);
+  top: auto;
+  z-index: 0;            /* stay a background flourish */
+  pointer-events: none;  /* never intercept clicks */
+}
+
 .deco {
   position: absolute;
   top: var(--deco-top, auto);
@@ -654,6 +665,22 @@ thead th {
   will-change: transform;
 }
 
+/* Drifting pumpkin: same gentle bob/sway as the spider, slightly different
+   timing/offsets so the two do not move in lockstep. transform-only, well
+   under the 15vw/15vh cap (Req 8.4). */
+@keyframes deco-pumpkin-drift {
+  0%   { transform: translate(0, 0)          rotate(0deg); }
+  25%  { transform: translate(-0.6vw, 1.8vh) rotate(-2deg); }
+  50%  { transform: translate(0, 3vh)        rotate(0deg); }
+  75%  { transform: translate(0.6vw, 1.5vh)  rotate(2deg); }
+  100% { transform: translate(0, 0)          rotate(0deg); }
+}
+
+.deco-pumpkin {
+  animation: deco-pumpkin-drift 7s ease-in-out infinite;
+  will-change: transform;
+}
+
 /* Twinkling stars: opacity ONLY, so the per-star sizing transform
    (scale(var(--star-scale))) set on .deco-star is never overridden. */
 @keyframes deco-star-twinkle {
@@ -678,6 +705,7 @@ thead th {
 @media (prefers-reduced-motion: reduce) {
   .deco-candle-flame,
   .deco-spider,
+  .deco-pumpkin,
   .deco-star {
     animation: none;
   }
