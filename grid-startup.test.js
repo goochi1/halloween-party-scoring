@@ -116,7 +116,7 @@ describe("grid structure (Req 2.1, 3.1, 4.1, 4.3)", () => {
 
     const byTeam = {};
     nameInputs.forEach((input) => {
-      expect(input.tagName).toBe("INPUT");
+      expect(input.tagName).toBe("TEXTAREA");
       expect(input.classList.contains("team-name-input")).toBe(true);
       byTeam[input.getAttribute("data-team-name")] = input;
     });
@@ -162,10 +162,10 @@ describe("grid structure (Req 2.1, 3.1, 4.1, 4.3)", () => {
     }
   });
 
-  it("has the HALLOWEEN PARTY title and message banner, and no reset button", () => {
+  it("has the party title and message banner, and no reset button", () => {
     const title = document.querySelector(".title");
     expect(title).not.toBeNull();
-    expect(title.textContent).toContain("HALLOWEEN PARTY");
+    expect(title.textContent).toContain("Halloween Party");
 
     // The reset button was removed from the UI by request.
     expect(document.querySelector("#reset-button")).toBeNull();

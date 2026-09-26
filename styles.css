@@ -73,10 +73,20 @@ body {
   text-align: center;
   letter-spacing: 0.02em;
   line-height: 1.05;
-  margin: 0 0 clamp(1rem, 3vw, 2.5rem);
+  margin: 0 0 clamp(0.5rem, 1.5vw, 1.25rem);
   /* Large and prominent — readable from across a room (Req 7.1, 9.1). */
-  font-size: clamp(3rem, 9vw, 8rem);
+  font-size: clamp(2.25rem, 6vw, 5rem);
   text-shadow: 0 0 18px rgba(181, 232, 71, 0.35);
+}
+
+/* Smaller "Daisy & Steph's" line above the big "Halloween Party" so the
+   whole scoreboard fits on one screen. */
+.title-prefix {
+  display: block;
+  font-size: 0.45em;
+  line-height: 1;
+  margin-bottom: 0.1em;
+  letter-spacing: 0.03em;
 }
 
 /* ---- Controls -------------------------------------------------------- */
@@ -226,11 +236,20 @@ thead th {
   color: var(--accent-orange);
   background: transparent;
   font-weight: 700;
-  font-size: clamp(1.5rem, 2.2vw, 2.25rem);
-  line-height: 1.15;
+  /* Smaller than before so a longer name wraps to two lines and still fits the
+     row header. */
+  font-size: clamp(1.05rem, 1.6vw, 1.6rem);
+  line-height: 1.1;
   padding: 0.15em 0.3em;
   border: 2px solid transparent;
   border-radius: 0.4rem;
+  /* Textarea: allow up to two wrapped lines, no resize handle, no scrollbars. */
+  resize: none;
+  overflow: hidden;
+  white-space: normal;
+  overflow-wrap: break-word;
+  word-break: break-word;
+  vertical-align: middle;
 }
 
 /* Placeholder (default "Team A".."Team D") stays legible — dimmed cream, not
@@ -443,6 +462,10 @@ thead th {
   color: var(--title);
   font-weight: 800;
   line-height: 1.15;
+  /* Honor the "\n" characters the controller inserts around the "&" so it sits
+     on its own line between the two pairings. pre-wrap reliably preserves the
+     standalone "&" line and both newlines (pre-line can collapse/trim them). */
+  white-space: pre-wrap;
   /* Very large, room-readable (Req 9.1, 12.6). */
   font-size: clamp(2rem, 6vw, 6rem);
   text-shadow: 0 0 18px rgba(181, 232, 71, 0.35);

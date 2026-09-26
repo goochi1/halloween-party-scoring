@@ -780,7 +780,11 @@ export function renderMatchupAnnouncement(state, gameId, root = document) {
     return;
   }
   const names = (state && state.names) || {};
-  content.textContent = formatMatchup(game.matchupPairs, names);
+  // Display-only: put the "&" on its own line between the two pairings so the
+  // second pairing reads under the first. formatMatchup itself is unchanged
+  // (still returns the " & "-joined string); we only reformat for the overlay.
+  const text = formatMatchup(game.matchupPairs, names);
+  content.textContent = text.replace(/ & /g, "\n&\n");
 }
 
 // Reveal the overlay for `gameId`: fill its content, un-hide #matchup-overlay,

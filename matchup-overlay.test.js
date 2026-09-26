@@ -86,7 +86,7 @@ describe("opening the overlay (Req 12.3, 12.4)", () => {
 
     expect(overlay().hidden).toBe(false);
     expect(content().textContent).toBe(
-      "Team A vs Team B & Team C vs Team D"
+      "Team A vs Team B\n&\nTeam C vs Team D"
     );
   });
 
@@ -99,7 +99,7 @@ describe("opening the overlay (Req 12.3, 12.4)", () => {
 
     expect(content().textContent).toContain("The Ghouls");
     expect(content().textContent).toBe(
-      "The Ghouls vs Team B & Team C vs Team D"
+      "The Ghouls vs Team B\n&\nTeam C vs Team D"
     );
   });
 });
